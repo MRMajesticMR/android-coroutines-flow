@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.majestic_dev.coroutinesflow.model.GetMessageUseCase
 import com.majestic_dev.coroutinesflow.model.GetMessageUseCaseImpl
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -21,6 +22,9 @@ class ViewModel(
     )
     val message: SharedFlow<String> = _message.asSharedFlow()
 
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventsFlow = eventChannel.receiveAsFlow()
+
     init {
         viewModelScope.launch {
             _message.emit(getMessageUseCase())
@@ -29,6 +33,14 @@ class ViewModel(
 
     fun toggleVisibility() {
         _visible.value = _visible.value != true
+
+        viewModelScope.launch {
+            if (_visible.value) {
+                eventChannel.send(Event.ShowToast("Visible"))
+            } else {
+                eventChannel.send(Event.ShowToast("Gone"))
+            }
+        }
     }
 
     fun changeMessage(msg: String) {
