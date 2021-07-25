@@ -3,9 +3,11 @@ package com.majestic_dev.coroutinesflow.ui.main
 import android.view.View
 import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.majestic_dev.coroutinesflow.R
 import com.majestic_dev.coroutinesflow.base.ViewBindingSupportFragment
 import com.majestic_dev.coroutinesflow.databinding.SMainBinding
+import kotlinx.coroutines.flow.collect
 
 class MainScreen : ViewBindingSupportFragment<SMainBinding>(R.layout.s_main) {
 
@@ -15,8 +17,9 @@ class MainScreen : ViewBindingSupportFragment<SMainBinding>(R.layout.s_main) {
         SMainBinding.bind(view)
 
     override fun initView(view: View) {
-        viewModel.visible.observe(viewLifecycleOwner) {
-            binding?.tvText?.isGone = !it
+        lifecycleScope.launchWhenStarted {
+            viewModel.visible
+                .collect { binding?.tvText?.isGone = !it }
         }
 
         binding?.bToggle?.setOnClickListener { viewModel.toggleVisibility() }

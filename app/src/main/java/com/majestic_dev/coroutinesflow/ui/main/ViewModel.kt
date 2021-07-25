@@ -1,15 +1,14 @@
 package com.majestic_dev.coroutinesflow.ui.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ViewModel : ViewModel() {
 
-    private val _visible = MutableLiveData<Boolean>().apply {
-        value = false
-    }
-    val visible: LiveData<Boolean> get() = _visible
+    private val _visible = MutableStateFlow(false)
+    val visible: StateFlow<Boolean> = _visible.asStateFlow()
 
     fun toggleVisibility() {
         _visible.value = _visible.value != true
