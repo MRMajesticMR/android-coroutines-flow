@@ -18,11 +18,17 @@ class MainScreen : ViewBindingSupportFragment<SMainBinding>(R.layout.s_main) {
 
     override fun initView(view: View) {
         lifecycleScope.launchWhenStarted {
-            viewModel.visible
-                .collect { binding?.tvText?.isGone = !it }
+            viewModel.visible.collect { binding?.tvText?.isGone = !it }
         }
 
-        binding?.bToggle?.setOnClickListener { viewModel.toggleVisibility() }
+        lifecycleScope.launchWhenStarted {
+            viewModel.message.collect { binding?.tvText?.text = it }
+        }
+
+        binding?.bToggle?.setOnClickListener {
+            viewModel.changeMessage("Message from screen")
+            viewModel.toggleVisibility()
+        }
     }
 
 }
